@@ -1,71 +1,66 @@
-# complexity-lens README
+# Complexity Lens
 
-This is the README for your extension "complexity-lens". After writing up a brief description, we recommend including the following sections.
+Расширение для Visual Studio Code, которое показывает **цикломатическую сложность** и **вложенность** функций прямо над кодом. Создано для начинающих разработчиков, чтобы они вовремя замечали функции, которые стали слишком запутанными для чтения и понимания.
 
-## Features
+**Автор:** Вильданов Рамзан Рустамович
+**Группа:** М3106
+**Работа:** лабораторная работа №3 «Разработка плагина для IDE»
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## Возможности
 
-For example if there is an image subfolder under your extension project workspace:
+- **Метрики над функцией.** Над каждой найденной функцией отображается строка вида `Сложность: 7 · Вложенность: 3`.
+- **Цикломатическая сложность** считается по формуле `1 + количество (if, for, while, case, catch, &&, ||)`.
+- **Максимальная вложенность** управляющих блоков (`if`, `for`, `while`, `switch`, `catch`, `else`, `try` и т. д.) внутри функции.
+- **Предупреждение о превышении порога.** Если сложность функции выше заданного порога, её строка подсвечивается жёлтым, а в метрике появляется значок ⚠.
+- **Отчёт по файлу.** Команда «Complexity Lens: Показать отчёт по файлу» выводит таблицу функций, отсортированную по убыванию сложности. Тот же отчёт открывается по клику на строку с метриками.
+- **Пересчёт при сохранении.** Метрики обновляются каждый раз, когда файл сохраняется.
 
-\!\[feature X\]\(images/feature-x.png\)
+## Поддерживаемые языки
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+C, C++, Java, JavaScript, TypeScript (включая JSX/TSX), C#, Go: языки с синтаксисом на фигурных скобках.
 
-## Requirements
+## Установка и запуск (режим разработки)
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+1. Склонировать репозиторий и открыть папку в VS Code.
+2. Выполнить `npm install`.
+3. Нажать `F5`: откроется окно *Extension Development Host* с подключённым расширением.
+4. В этом окне открыть любой файл на поддерживаемом языке (например, `sample.cpp` из репозитория).
 
-## Extension Settings
+## Настройка
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+| Параметр | По умолчанию | Описание |
+|---|---|---|
+| `complexityLens.threshold` | `10` | Порог сложности. Функции со сложностью **строго выше** порога подсвечиваются жёлтым. |
 
-For example:
+Изменить можно через `Ctrl+,` (поиск `complexityLens`) или в `settings.json`:
 
-This extension contributes the following settings:
+```json
+"complexityLens.threshold": 5
+```
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Структура проекта
 
-## Known Issues
+```
+complexity-lens/
+├── src/
+│   ├── analyzer.ts    # анализатор: текст файла -> метрики функций (без зависимости от VS Code)
+│   └── extension.ts   # подключение к VS Code: CodeLens, подсветка, команда, события
+├── sample.cpp         # пример файла для проверки
+├── package.json       # манифест расширения: команды, настройки, события активации
+└── DOCUMENTATION.md   # подробная документация и блок-схема
+```
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Подробнее об устройстве читай в [DOCUMENTATION.md](DOCUMENTATION.md).
 
-## Release Notes
+## Ограничения
 
-Users appreciate release notes as you update your extension.
+Разбор кода эвристический (расширение не является полноценным парсером языка):
 
-### 1.0.0
+- `if`/`for`/`while` без фигурных скобок учитываются в сложности, но не во вложенности;
+- тернарный оператор `?:` в сложность не входит;
+- анонимные колбэки и лямбды считаются частью внешней функции;
+- на нестандартном форматировании кода разбор может ошибиться.
 
-Initial release of ...
+## Использование ИИ
 
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+При разработке использовался ИИ-ассистент Claude (Anthropic): помощь в проектировании архитектуры и написании кода. Авторство и ответственность за итоговую работу остаются за автором.
